@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -785,9 +785,10 @@ public class ItemRequestWindow : Window
         }
 
         filteredRequestableItems.Clear();
-        var thingEntries = (from x in ThingDatabase.Instance.AllThingsOfType(thingTypeFilter)
-            where hasMaximumTechLevel(x, faction.def.techLevel)
-            select x).ToList();
+        // var thingEntries = (from x in ThingDatabase.Instance.AllThingsOfType(thingTypeFilter)
+        //     where hasMaximumTechLevel(x, faction.def.techLevel)
+        //     select x).ToList();
+        var thingEntries = from item in allRequestableItems where item.type == thingTypeFilter select item;
 
         foreach (var thingEntry in thingEntries)
         {
@@ -796,19 +797,25 @@ public class ItemRequestWindow : Window
                 continue;
             }
 
-            var foundEntry = GetTradeableThingEntry(thingEntry.thing);
-            if (foundEntry == null)
+            // var foundEntry = GetTradeableThingEntry(thingEntry.thing);
+            // if (foundEntry == null)
+            // {
+            //     // Log.Warning("Could not find matching TradeableThingEntry for " + thingEntry.Label);
+            // }
+            // else
+            // {
+            //     var madeOfRightStuff = stuffTypeFilter == null ||
+            //                            foundEntry.tradeable.FirstThingTrader.Stuff == stuffTypeFilter;
+            //     if (madeOfRightStuff)
+            //     {
+            //         filteredRequestableItems.Add(foundEntry);
+            //     }
+            // }
+            var madeOfRightStuff = stuffTypeFilter == null ||
+                                   thingEntry.tradeable.FirstThingTrader.Stuff == stuffTypeFilter;
+            if (madeOfRightStuff)
             {
-                // Log.Warning("Could not find matching TradeableThingEntry for " + thingEntry.Label);
-            }
-            else
-            {
-                var madeOfRightStuff = stuffTypeFilter == null ||
-                                       foundEntry.tradeable.FirstThingTrader.Stuff == stuffTypeFilter;
-                if (madeOfRightStuff)
-                {
-                    filteredRequestableItems.Add(foundEntry);
-                }
+                filteredRequestableItems.Add(thingEntry);
             }
         }
 
